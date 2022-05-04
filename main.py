@@ -1,13 +1,17 @@
 from time import sleep
 import tkinter as Tk
 
+from vectors import vector
+
 
 from tkInterfaceF import tkInterface
 
 
-a = tkInterface(Tk.Tk())
+a = tkInterface(Tk)
 
-a.wMainloop()
+while a.alive():
+    a.preLoop()
+    
+    a.update()
 
-sleep(3)
 
