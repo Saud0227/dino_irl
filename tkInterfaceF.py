@@ -12,14 +12,16 @@ class tkInterface:
         self.tkroot = _tk.Tk()
         self._alive = True
         self.root = _tk.Canvas(self.tkroot, width=1536,height=864, bg="white")
+        self.root.pack()
         self.tkroot.attributes('-fullscreen', True)
         self.tkroot.bind('<Escape>',lambda e: self.unalive())
         
         #---------------------------------------
         self.rectMode = configHandler("rectmode")
         self.rectMode.state = 0
-        self.rectMode.aceptedValue = ["corner, center, allcorners"]
+        self.rectMode.aceptedValue = ["onecorner", "center", "twocorner"]
         self.rectMode.verify()
+        print(self.rectMode.active)
         
         
         
@@ -49,7 +51,7 @@ class tkInterface:
     
     
     def rect(self, *args):
-        ccr = ["iiii", "vii", "vv"]
+        ccr = ["iiii", "vv"]
         code = ""
         for i in args:
             if type(i) == int:
@@ -64,29 +66,52 @@ class tkInterface:
         except ValueError:
             return False
         
+        print(self.rectMode.getState())
         
-        if inType == 0:
+        
+        
+        if self.rectMode.getState() == 0:
             
-            corn = [args[0],args[1],args[0]+args[2],args[1],args[0]+args[2],args[1]+args[3],args[0],args[1]+args[3]]
-            print(corn)
-            id = self._rectPolyDraw(corn)
+            if inType == 0:
+                corn = [args[0],args[1],args[0]+args[2],args[1],args[0]+args[2],args[1]+args[3],args[0],args[1]+args[3]]
+
+            elif inType == 1:
+                corn = [args[0].x,args[0].y,args[0].x+args[1].x,args[0].y,args[0].x+args[1].x,args[0].y+args[1].y,args[0].x,args[0].y+args[1].y]
+        
+        elif self.rectMode.getState() == 1:
             
-            return id
-           
+            if inType == 0:
+                corn = [(args[0]-args[2]/2),(args[1]-args[3]/2),(args[0]+args[2]/2),(args[1]-args[3]/2),(args[0]+args[2]/2),(args[1]+args[3]/2),(args[0]-args[2]/2),(args[1]+args[3]/2)]
+
+            elif inType == 1:
+                corn = [(args[0].x-args[1].x/2),(args[0].y-args[1].y/2),(args[0].x+args[1].x/2),(args[0].y-args[1].y/2),(args[0].x+args[1].x/2),(args[0].y+args[1].y/2),(args[0].x-args[1].x/2),(args[0].y+args[1].y/2)]
+        elif self.rectMode.getState() == 2:
+            
+            if inType == 0:
+                corn = [args[0],args[1],args[2], args[1],args[2],args[3],args[0],args[3]]
+                
+            elif inType == 1:
+                corn = [args[0].x,args[0].y,args[1].x, args[0].y,args[1].x,args[1].y,args[0].x,args[1].y]
+            
         
+        print(corn)
+        id = self._rectPolyDraw(corn)
         
-        
-        
+        return id
 
 
 if __name__ == '__main__':
     a = tkInterface(tk)
+    dX = 500
     while a.alive():
-        # a.preLoop()
-        id = a.rect(500, 500,100,100)
+        a.preLoop()
+        a.rectMode.changeVal("twocorner")
+        print(a.rectMode.getState())
+        id = a.rect(500, 500, dX, 100)
+        dX+=5
         # canvas
-        sleep(5)
         print("!")
         a.update()
+        sleep(0.01)
     
     
