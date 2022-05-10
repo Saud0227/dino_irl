@@ -16,6 +16,9 @@ class tkInterface:
         self.tkroot.attributes('-fullscreen', True)
         self.tkroot.bind('<Escape>',lambda e: self.unalive())
         
+        self.itemIdIndex = 0
+        self.itemIdPrefix = "CanvRootObj"
+        
         #---------------------------------------
         self.rectMode = configHandler("rectmode")
         self.rectMode.state = 0
@@ -32,8 +35,9 @@ class tkInterface:
     def update(self):
         self.tkroot.update()
         
-    def preLoop(self):
+    def postloop(self):
         self.root.delete("all")
+        self.itemIdIndex = 0
     
     def unalive(self):
         self._alive = False
@@ -44,8 +48,15 @@ class tkInterface:
         return self._alive
     
     
+    def _getItemId(self):
+        id = self.itemIdPrefix + str(self.itemIdIndex)
+        self.itemIdIndex+=1
+        return id
+        
+    
     def _rectPolyDraw(self, posL):
-        id = self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill='red')
+        id = self._getItemId()
+        obj = self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill='red', tags=id)
         return(id)
     
     
@@ -102,16 +113,24 @@ class tkInterface:
 
 if __name__ == '__main__':
     a = tkInterface(tk)
-    dX = 500
+    dX = 550
     while a.alive():
-        a.preLoop()
         a.rectMode.changeVal("twocorner")
         print(a.rectMode.getState())
         id = a.rect(500, 500, dX, 100)
+        
+        
+        
         dX+=5
         # canvas
-        print("!")
         a.update()
+        sleep(3)
+
+        a.postloop()
+    
+        a.update()
+        sleep(3)
+       
         sleep(0.01)
     
     
