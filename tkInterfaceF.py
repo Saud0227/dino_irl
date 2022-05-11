@@ -1,7 +1,7 @@
 import tkinter as tk
 from time import sleep
 
-from serviceH import configHandler
+from serviceH import configHandler, rectHandler
 
 from vectors import vector
 
@@ -54,8 +54,9 @@ class tkInterface:
         return id
         
     
-    def _rectPolyDraw(self, posL):
+    def _rectPolyDraw(self, rectHand):
         id = self._getItemId()
+        posL = rectHand.getDrawData(id)
         obj = self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill='red', tags=id)
         return(id)
     
@@ -79,36 +80,27 @@ class tkInterface:
         
         print(self.rectMode.getState())
         
+        processed = []
         
+        if inType == 0:
+            for i in args:
+                processed.append(i)
+        if inType == 2:
+            i = 0
+            for itm in args:
+                processed.append(itm.x)
+                i+=1
+                processed.append(itm.y)
+                i+=1
         
-        if self.rectMode.getState() == 0:
-            
-            if inType == 0:
-                corn = [args[0],args[1],args[0]+args[2],args[1],args[0]+args[2],args[1]+args[3],args[0],args[1]+args[3]]
-
-            elif inType == 1:
-                corn = [args[0].x,args[0].y,args[0].x+args[1].x,args[0].y,args[0].x+args[1].x,args[0].y+args[1].y,args[0].x,args[0].y+args[1].y]
+        print(processed)
         
-        elif self.rectMode.getState() == 1:
-            
-            if inType == 0:
-                corn = [(args[0]-args[2]/2),(args[1]-args[3]/2),(args[0]+args[2]/2),(args[1]-args[3]/2),(args[0]+args[2]/2),(args[1]+args[3]/2),(args[0]-args[2]/2),(args[1]+args[3]/2)]
-
-            elif inType == 1:
-                corn = [(args[0].x-args[1].x/2),(args[0].y-args[1].y/2),(args[0].x+args[1].x/2),(args[0].y-args[1].y/2),(args[0].x+args[1].x/2),(args[0].y+args[1].y/2),(args[0].x-args[1].x/2),(args[0].y+args[1].y/2)]
-        elif self.rectMode.getState() == 2:
-            
-            if inType == 0:
-                corn = [args[0],args[1],args[2], args[1],args[2],args[3],args[0],args[3]]
-                
-            elif inType == 1:
-                corn = [args[0].x,args[0].y,args[1].x, args[0].y,args[1].x,args[1].y,args[0].x,args[1].y]
-            
+        rectObj = rectHandler(processed, self.rectMode.state())
         
-        print(corn)
-        id = self._rectPolyDraw(corn)
+        #print(corn)
+        #id = self._rectPolyDraw(corn)
         
-        return id
+        #return id
 
 
 if __name__ == '__main__':
