@@ -11,7 +11,7 @@ a = tkInterface(Tk)
 
 while a.alive():
     a.preLoop()
-    
+
     a.update()
 
 

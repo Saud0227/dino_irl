@@ -43,10 +43,10 @@ class vector():
     def __init__(self,x,y):
         self.x = x
         self.y = y
-    
+
     def mag(self):
         return pRound(m.sqrt(self.x*self.x + self.y*self.y),2)
-    
+
     def __str__(self):
         return(str(self.x) +","+ str(self.y))
     def __repr__(self):
