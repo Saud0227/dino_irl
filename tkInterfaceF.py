@@ -63,39 +63,21 @@ class tkInterface:
     
     
     def rect(self, *args):
-        ccr = ["iiii", "vv"]
-        code = ""
-        for i in args:
-            if type(i) == int:
-                code+="i"
-            elif type(i) == vector:
-                code+="v"
+        
+        #Detects input type
+        processed = [""]*4
+        for i,itm in enumerate(args):
+            if type(itm) == int:
+                processed[i] = int(itm)
             else:
                 raise ValueError("Non suported input (use int or vector)")
-            
-        try:
-            inType = ccr.index(code)
-        except ValueError:
-            return False
+    
+                
         
-        print(self.rectMode.getState())
         
-        processed = []
+        #Rect mode determens draw mode
         
-        if inType == 0:
-            for i in args:
-                processed.append(i)
-        if inType == 2:
-            i = 0
-            for itm in args:
-                processed.append(itm.x)
-                i+=1
-                processed.append(itm.y)
-                i+=1
-        
-        print(processed)
-        
-        rectObj = rectHandler(processed, self.rectMode.state())
+        # rectObj = rectHandler(processed, self.rectMode.state())
         
         #print(corn)
         #id = self._rectPolyDraw(corn)
@@ -108,7 +90,6 @@ if __name__ == '__main__':
     dX = 550
     while a.alive():
         a.rectMode.changeVal("twocorner")
-        print(a.rectMode.getState())
         id = a.rect(500, 500, dX, 100)
         
         

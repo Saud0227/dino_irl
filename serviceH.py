@@ -53,7 +53,7 @@ class configHandler:
 class rectHandler:
     
     
-    def __init__(self, dat, datParcing, color = null):
+    def __init__(self, dat, datParcing, color = None):
         print("!")
         self.corner = [""]*4
         
