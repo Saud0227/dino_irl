@@ -26,9 +26,13 @@ class tkInterface:
         self.rectMode.state = 0
         self.rectMode.acceptedValue = ["onecorner", "center", "twocorner"]
         self.rectMode.verify()
-        print(self.rectMode.active)
 
         #---------------------------------------
+
+
+        self._fill = self._rgb_to_hex((255,255,255))
+        self._stroke = self._rgb_to_hex((0,0,0))
+        self._strokeW = 2
 
     def getMousePos(self):
         return vector(self.tkRoot.winfo_pointerx(),self.tkRoot.winfo_pointery())
@@ -52,6 +56,40 @@ class tkInterface:
     def alive(self):
         return self._alive
 
+    def _rgb_to_hex(self, rgb):
+        return ("#" + ('%02x%02x%02x' % rgb))
+
+    def fill(self, r: int, g: int, b: int):
+        values = [r,g,b]
+        done = [""]*3
+        for i, itm  in enumerate(values):
+            itm = int(itm)
+            if itm < 0:
+                itm = 0
+            if itm > 255:
+                itm = 255
+            done[i] = itm
+        rgb  = (done[0], done[1], done[2])
+        self._fill = self._rgb_to_hex(rgb)
+
+    def stroke(self, r: int, g: int, b: int):
+        values = [r,g,b]
+        done = [""]*3
+        for i, itm  in enumerate(values):
+            itm = int(itm)
+            if itm < 0:
+                itm = 0
+            if itm > 255:
+                itm = 255
+            done[i] = itm
+        rgb  = (done[0], done[1], done[2])
+        self._stroke = self._rgb_to_hex(rgb)
+
+
+    def strokeW(self, l: int):
+        if l < 0:
+            l = 0
+        self._strokeW = l
 
     def _getItemId(self):
         id = self.itemIdPrefix + str(self.itemIdIndex)
@@ -61,40 +99,46 @@ class tkInterface:
 
     def _rectPolyDraw(self, posL):
         id = self._getItemId()
-        obj = self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill='red', tags=id)
+        if self._strokeW > 0:
+            self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill = self._fill, outline = self._stroke, width = self._strokeW, tags=id)
+        else:
+            self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill = self._fill, tags=id)
         return(id)
 
 
 
-    def rect(self, *args):
+    def rect(self, x1, y1, x2, y2, draw = True):
 
-        #Detects input type
-        processed = [""]*4
-        for i,itm in enumerate(args):
-            if type(itm) == int:
-                processed[i] = int(itm)
-            else:
-                raise ValueError("Non supported input (use int or vector)")
-
-
-
+        processed = [int(x1),int(y1), int(x2), int(y2)]
 
         #Rect mode determens draw mode
-        rectObj = rectHandler(processed, self.rectMode.getState(), self._rectPolyDraw)
+        if draw:
+            rectObj = rectHandler(processed, self.rectMode.getState(), self._rectPolyDraw)
+        else:
+            rectObj = rectHandler(processed, self.rectMode.getState())
         return rectObj
 
 
 if __name__ == '__main__':
     a = tkInterface(tk)
+    col = False
+    a.strokeW(-2)
     while a.alive():
-        a.rectMode.changeVal("onecorner")
+        a.rectMode.changeVal("twocorner")
+
+        a.fill(0,0,255)
         rectH1 = a.rect(500, 500, 100, 100)
 
         mPos = a.getMousePos()
         a.rectMode.changeVal("center")
+        if col:
+            a.fill(255,0,0)
+        else:
+            a.fill(0,255,0)
         rectH2 = a.rect(mPos.x, mPos.y, 50, 50)
 
-        print(rectHandler.checkCollision(rectH1, rectH2))
+        col = rectHandler.checkCollision(rectH1, rectH2)
+
         # canvas
         a.update()
         #sleep(3)

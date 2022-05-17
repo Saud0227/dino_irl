@@ -57,7 +57,14 @@ class rectHandler:
 
     @staticmethod
     def checkCollision(r1,r2):
-        return r1,r2
+        # Box vs box collision check
+        return (
+        r1.corner[0].x<r2.corner[2].x
+        and r1.corner[2].x > r2.corner[0].x
+        and r1.corner[0].y<r2.corner[2].y
+        and r1.corner[2].y > r2.corner[0].y
+        )
+
 
 
     def __init__(self, dat, datParcing, drawFunc = None):
@@ -101,12 +108,12 @@ class rectHandler:
         tmpCorner[2] = vector(dat[2], dat[3])
         tmpCorner[3] = vector(dat[0], dat[3])
 
-        checkX = False
-        checkY = False
+        checkX = True
+        checkY = True
 
-        while checkX and checkY:
-            checkX = False
-            checkY = False
+        while checkX or checkY:
+            checkX = True
+            checkY = True
             if tmpCorner[0].x > tmpCorner[1].x:
                 extratmp = [""]*4
                 extratmp[0] = tmpCorner[1]
@@ -115,9 +122,9 @@ class rectHandler:
                 extratmp[3] = tmpCorner[2]
                 tmpCorner = extratmp
             else:
-                checkX = True
+                checkX = False
 
-            if tmpCorner[0].y > tmpCorner[2].y1:
+            if tmpCorner[0].y > tmpCorner[2].y:
                 extratmp = [""]*4
                 extratmp[0] = tmpCorner[3]
                 extratmp[1] = tmpCorner[2]
@@ -125,7 +132,7 @@ class rectHandler:
                 extratmp[3] = tmpCorner[0]
                 tmpCorner = extratmp
             else:
-                checkY = True
+                checkY = False
         self.corner = tmpCorner
 
 
