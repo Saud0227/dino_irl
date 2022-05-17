@@ -11,10 +11,12 @@ class tkInterface:
     def __init__(self, _tk):
         self.tkRoot = _tk.Tk()
         self._alive = True
-        self.root = _tk.Canvas(self.tkRoot, width=1536,height=864, bg="white")
-        self.root.pack()
+
         self.tkRoot.attributes('-fullscreen', True)
         self.tkRoot.bind('<Escape>',lambda e: self.unalive())
+
+        self.root = _tk.Canvas(self.tkRoot, width=int(self.tkRoot.winfo_screenwidth()),height=int(self.tkRoot.winfo_screenwidth()), bg="white")
+        self.root.pack()
 
         self.itemIdIndex = 0
         self.itemIdPrefix = "CanvasRootObj"
@@ -28,12 +30,17 @@ class tkInterface:
 
         #---------------------------------------
 
-
+    def getMousePos(self):
+        return vector(self.tkRoot.winfo_pointerx(),self.tkRoot.winfo_pointery())
 
     def update(self):
+        if not self._alive:
+            return None
         self.tkRoot.update()
 
     def postloop(self):
+        if not self._alive:
+            return None
         self.root.delete("all")
         self.itemIdIndex = 0
 
@@ -52,9 +59,8 @@ class tkInterface:
         return id
 
 
-    def _rectPolyDraw(self, rectHand):
+    def _rectPolyDraw(self, posL):
         id = self._getItemId()
-        posL = rectHand.getDrawData(id)
         obj = self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill='red', tags=id)
         return(id)
 
@@ -74,33 +80,28 @@ class tkInterface:
 
 
         #Rect mode determens draw mode
-
-        # rectObj = rectHandler(processed, self.rectMode.state())
-
-        #print(corn)
-        #id = self._rectPolyDraw(corn)
-
-        #return id
+        rectObj = rectHandler(processed, self.rectMode.getState(), self._rectPolyDraw)
+        return rectObj
 
 
 if __name__ == '__main__':
     a = tkInterface(tk)
-    dX = 550
     while a.alive():
-        a.rectMode.changeVal("twocorner")
-        id = a.rect(500, 500, dX, 100)
+        a.rectMode.changeVal("onecorner")
+        rectH1 = a.rect(500, 500, 100, 100)
 
+        mPos = a.getMousePos()
+        a.rectMode.changeVal("center")
+        rectH2 = a.rect(mPos.x, mPos.y, 50, 50)
 
-
-        dX+=5
+        print(rectHandler.checkCollision(rectH1, rectH2))
         # canvas
         a.update()
-        sleep(3)
+        #sleep(3)
 
         a.postloop()
 
-        a.update()
-        sleep(3)
+        #sleep(3)
 
         sleep(0.01)
 

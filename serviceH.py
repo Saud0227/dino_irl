@@ -16,11 +16,11 @@ class configHandler:
             valI = self.acceptedValue.index(value.lower())
             return valI
         except ValueError:
-            return False
+            return -1
 
     def changeVal(self, value):
         newVal = self.checkAccepted(value)
-        if newVal != False:
+        if newVal > -1:
             self.state = newVal
         else:
             print(f"{value} not known")
@@ -53,20 +53,26 @@ class configHandler:
 class rectHandler:
 
 
-    def __init__(self, dat, datParcing, color = None):
-        print("!")
+
+
+    @staticmethod
+    def checkCollision(r1,r2):
+        return r1,r2
+
+
+    def __init__(self, dat, datParcing, drawFunc = None):
+
         self.corner = [""]*4
 
         parcing_options = [self._setupOneC, self._setupCent, self._setupTwoC]
 
         parcing_options[datParcing](dat)
 
-        #self.color = color  tmp
+        if drawFunc is not None:
+            self.cId = drawFunc(self.getDrawData())
 
-
-    def getDrawData(self, id):
+    def getDrawData(self):
         exportList = []
-        self.cId = id
         for i in range(len(self.corner)):
             exportList.append(self.corner[i].x)
             exportList.append(self.corner[i].y)
