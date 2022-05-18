@@ -1,9 +1,11 @@
 import tkinter as tk
 from time import sleep
+from tkinter import font
 
 from serviceH import configHandler, rectHandler
 
 from vectors import vector
+import json
 
 class tkInterface:
 
@@ -33,6 +35,28 @@ class tkInterface:
         self._fill = self._rgb_to_hex((255,255,255))
         self._stroke = self._rgb_to_hex((0,0,0))
         self._strokeW = 2
+
+
+        #---------------------------------------
+
+        self.textTypes = {}
+        self.textTypes["middle"] = {
+            "rgb":self._rgb_to_hex((200,200,200)),
+            "anchor":"w",
+            "styling":('Helvetica','12')
+        }
+        self.textTypes["standard"] = {
+            "rgb":self._rgb_to_hex((200,200,200)),
+            "anchor":"nw",
+            "styling":('Helvetica','12')
+        }
+        self.textTypes["title"] = {
+            "rgb":self._rgb_to_hex((0,0,0)),
+            "anchor":"center",
+            "styling":('Helvetica','30', 'bold')
+        }
+
+
 
     def getMousePos(self):
         return vector(self.tkRoot.winfo_pointerx(),self.tkRoot.winfo_pointery())
@@ -103,7 +127,7 @@ class tkInterface:
             self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill = self._fill, outline = self._stroke, width = self._strokeW, tags=id)
         else:
             self.root.create_polygon(posL[0],posL[1],posL[2],posL[3],posL[4],posL[5],posL[6],posL[7], fill = self._fill, tags=id)
-        return(id)
+        return id
 
 
 
@@ -111,7 +135,7 @@ class tkInterface:
 
         processed = [int(x1),int(y1), int(x2), int(y2)]
 
-        #Rect mode determens draw mode
+        #Rect mode determents draw mode
         if draw:
             rectObj = rectHandler(processed, self.rectMode.getState(), self._rectPolyDraw)
         else:
@@ -119,11 +143,27 @@ class tkInterface:
         return rectObj
 
 
+    def line(self, x1, y1, x2, y2, draw = True):
+        id = self._getItemId()
+        self.root.create_line(x1, y1, x2, y2, fill = self._stroke, width = self._strokeW, smooth=True, tags=id)
+        return id
+
+
+
+    def text(self, x1: int, y1: int, text: str, style: str):
+        try:
+            textOptions = self.textTypes[style]
+        except KeyError:
+            textOptions = self.textTypes["standard"]
+        id = self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"])
+
+
 if __name__ == '__main__':
     a = tkInterface(tk)
     col = False
     a.strokeW(-2)
     while a.alive():
+        a.strokeW(-2)
         a.rectMode.changeVal("twocorner")
 
         a.fill(0,0,255)
@@ -131,6 +171,7 @@ if __name__ == '__main__':
 
         mPos = a.getMousePos()
         a.rectMode.changeVal("center")
+
         if col:
             a.fill(255,0,0)
         else:
@@ -138,7 +179,10 @@ if __name__ == '__main__':
         rectH2 = a.rect(mPos.x, mPos.y, 50, 50)
 
         col = rectHandler.checkCollision(rectH1, rectH2)
+        a.text(mPos.x, mPos.y, "MOUSE", "standard")
 
+        a.strokeW(5)
+        a.line(300, 300, mPos.x, mPos.y)
         # canvas
         a.update()
         #sleep(3)
@@ -147,5 +191,5 @@ if __name__ == '__main__':
 
         #sleep(3)
 
-        sleep(0.01)
+        sleep(0.005)
 
