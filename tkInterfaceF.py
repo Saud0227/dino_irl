@@ -10,11 +10,12 @@ import json
 class tkInterface:
 
 
-    def __init__(self, _tk):
+    def __init__(self, _tk, _debug:bool = False):
         self.tkRoot = _tk.Tk()
         self._alive = True
+        if not _debug:
+            self.tkRoot.attributes('-fullscreen', True)
 
-        self.tkRoot.attributes('-fullscreen', True)
         self.tkRoot.bind('<Escape>',lambda e: self.unalive())
 
         self.root = _tk.Canvas(self.tkRoot, width=int(self.tkRoot.winfo_screenwidth()),height=int(self.tkRoot.winfo_screenwidth()), bg="white")
@@ -157,6 +158,10 @@ class tkInterface:
             textOptions = self.textTypes["standard"]
         id = self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"])
 
+
+
+    def getSize(self):
+        return vector(self.root.winfo_width(),self.root.winfo_height())
 
 if __name__ == '__main__':
     a = tkInterface(tk)
