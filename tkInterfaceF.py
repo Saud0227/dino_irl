@@ -5,7 +5,7 @@ from tkinter import font
 from serviceH import configHandler, rectHandler
 
 from vectors import vector
-import json
+
 
 class tkInterface:
 
@@ -158,7 +158,9 @@ class tkInterface:
             textOptions = self.textTypes["standard"]
         id = self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"])
 
-
+    @staticmethod
+    def checkColRect(a, b):
+        return rectHandler.checkCollision(a, b)
 
     def getSize(self):
         return vector(self.root.winfo_width(),self.root.winfo_height())
@@ -183,7 +185,7 @@ if __name__ == '__main__':
             a.fill(0,255,0)
         rectH2 = a.rect(mPos.x, mPos.y, 50, 50)
 
-        col = rectHandler.checkCollision(rectH1, rectH2)
+        col = a.checkColRect(rectH1, rectH2)
         a.text(mPos.x, mPos.y, "MOUSE", "standard")
 
         a.strokeW(5)

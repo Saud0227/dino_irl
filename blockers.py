@@ -21,6 +21,7 @@ class blocker:
 
 
         self.killMe = False
+        self.checkCol = False
 
 
 
@@ -34,9 +35,10 @@ class blocker:
         #if self.x < a.getSize().x/2:
         if self.x < a.getSize().x:
             a.fill(255,0,0)
+            self.checkCol = True
             self.currentCollision = a.rect(self.x, self.y-self.yS, self.xS, self.yS, True)
 
 
         if self.x < self.xS*-1:
             self.killMe = True
-            print("Kill me")
+            #print("Kill me")
