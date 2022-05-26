@@ -67,13 +67,13 @@ class rectHandler:
 
 
 
-    def __init__(self, dat, datParcing, drawFunc = None):
+    def __init__(self, dat, datParsing, drawFunc = None):
 
         self.corner = [""]*4
 
-        parcing_options = [self._setupOneC, self._setupCent, self._setupTwoC]
+        parsing_options = [self._setupOneC, self._setupCent, self._setupTwoC]
 
-        parcing_options[datParcing](dat)
+        parsing_options[datParsing](dat)
 
         if drawFunc is not None:
             self.cId = drawFunc(self.getDrawData())
@@ -115,22 +115,22 @@ class rectHandler:
             checkX = True
             checkY = True
             if tmpCorner[0].x > tmpCorner[1].x:
-                extratmp = [""]*4
-                extratmp[0] = tmpCorner[1]
-                extratmp[1] = tmpCorner[0]
-                extratmp[2] = tmpCorner[3]
-                extratmp[3] = tmpCorner[2]
-                tmpCorner = extratmp
+                extraTmp = [""]*4
+                extraTmp[0] = tmpCorner[1]
+                extraTmp[1] = tmpCorner[0]
+                extraTmp[2] = tmpCorner[3]
+                extraTmp[3] = tmpCorner[2]
+                tmpCorner = extraTmp
             else:
                 checkX = False
 
             if tmpCorner[0].y > tmpCorner[2].y:
-                extratmp = [""]*4
-                extratmp[0] = tmpCorner[3]
-                extratmp[1] = tmpCorner[2]
-                extratmp[2] = tmpCorner[1]
-                extratmp[3] = tmpCorner[0]
-                tmpCorner = extratmp
+                extraTmp = [""]*4
+                extraTmp[0] = tmpCorner[3]
+                extraTmp[1] = tmpCorner[2]
+                extraTmp[2] = tmpCorner[1]
+                extraTmp[3] = tmpCorner[0]
+                tmpCorner = extraTmp
             else:
                 checkY = False
         self.corner = tmpCorner
