@@ -25,10 +25,13 @@ class blocker:
 
 
 
-    def update(self, a):
+    def update(self, a, active=True):
         if self.killMe:
             return None
-        self.x -= self.moveSpeed
+        if active:
+            self.x -= self.moveSpeed
+
+
         if self.x < a.getSize().x:
             pass
             #display graphic
