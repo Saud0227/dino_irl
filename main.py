@@ -1,19 +1,35 @@
-from pydoc import cli
 from time import sleep
 import tkinter as Tk
 from vectors import vector
 from tkInterfaceF import tkInterface
-from random import randint, random
+from random import randint
 
 from blockers import blocker
 
-#GAME SHITS
+
+import keyboard
+
+#APP SHITS
 #------------------------------------------------------------
+appState = 0
 pauseList = {}
 globalTick = 0.01
-ground = 700
-#------------------------------------------------------------
 
+
+
+
+#Buttons
+#------------------------------------------------------------
+jumpPad = False
+crouchLeft= False
+crouchRight = False
+
+buttonDebug = True
+
+#LIVE SHITS
+#------------------------------------------------------------
+dAlive = True
+ground = 700
 
 
 # DINO SHITS
@@ -21,13 +37,12 @@ ground = 700
 jumpActive = False
 jumpH = 40
 jumpReduce = 1.5
-height = 120
-width = 90
-dPosY = ground-height
+dinoHeight = 120
+dinoWidth = 90
+dPosY = ground-dinoHeight
 dPosYStart = dPosY
 dinoDeltaY = 0
 crouchActive = False
-#------------------------------------------------------------
 
 #BLOCKER SHITS
 #------------------------------------------------------------
@@ -38,14 +53,28 @@ blocker.typeXSize = {0:20, 1:20, 2:50, 3:50}
 blocker.typeYSize = {0:40, 1:50, 2:30, 3:30}
 blocker.moveSpeed = 10
 spawnTimeDelta = 1
+# Spawner tweak
+#------------------------------------------------------------
+
+dCCutoff = 0.7
+dCChangeVal = 70
+speedCutoff = 30
+speedChangeVal = 10
 
 #------------------------------------------------------------
+
+
+
+a = tkInterface(Tk, True)
+
+
+
 
 def smartInsert(list, clsItm):
     for i in range(len(list)):
         if list[i].killMe:
             list[i] = clsItm
-            print("Place was recycled")
+            # print("Place was recycled")
             return True
     list.append(clsItm)
 
@@ -55,11 +84,11 @@ def pause(tag: str, cDelay: int):
         cTime = pauseList[tag.lower()]
         pauseList[tag.lower()] = cTime - 1
         if cTime == -2:
-            pauseList[tag.lower()] = cDelay/globalTick
+            pauseList[tag.lower()] = int(cDelay/globalTick)
             return False
         return cTime < 0
     except KeyError:
-        pauseList[tag.lower()] = cDelay/globalTick
+        pauseList[tag.lower()] = int(cDelay/globalTick)
         return False
 
 def checkPause(tag: str):
@@ -71,7 +100,7 @@ def checkPause(tag: str):
         return "Error"
 def jump():
     global dPosY, dPosYStart, dinoDeltaY, jumpActive, jumpH, jumpReduce, crouchActive
-    if crouchActive:
+    if crouchActive or jumpActive:
         return
     dinoDeltaY = jumpH
     jumpActive = True
@@ -96,7 +125,7 @@ def jumpTick():
     dinoDeltaY -= jumpReduce
     dPosY -= dinoDeltaY
 
-a = tkInterface(Tk, True)
+
 
 
 def spawnTRNG():
@@ -116,13 +145,20 @@ def spawnTRNG():
 
 def spawner():
     global dC, bList, spawnTimeDelta
-    spawnTimeDelta = 1-dC/100
-    if spawnTimeDelta < 0.2:
-        spawnTimeDelta == 0.2
-    if pause("spawn", int(spawnTimeDelta)):
+    global dCCutoff, dCChangeVal, speedChangeVal, speedCutoff
+    if pause("spawn", spawnTimeDelta):
         dC +=1
-        blocker.moveSpeed +=dC/20
-        spawnX = a.getSize().x*1.2
+
+
+
+        spawnTimeDelta = 1.3 - dC / dCChangeVal+int(spawnTimeDelta<dCCutoff)*(dC / dCChangeVal -dCCutoff)/2
+        if spawnTimeDelta < 0.1:
+            spawnTimeDelta = 0.1
+
+        blocker.moveSpeed = 10 + dC / (speedChangeVal*(1+int(blocker.moveSpeed>speedCutoff)))
+        if blocker.moveSpeed > 70:
+            blocker.moveSpeed = 70
+        spawnX = a.getSize().x*1.2 + randint(-int(a.getSize().x*0.15),200)
 
         toSpawn = spawnTRNG()
 
@@ -138,45 +174,107 @@ def spawner():
 
 
 
+def gameOverCh(_state:bool):
+    global appState
+    if _state:
+        print("DEAD")
+        appState = 1
+
+
+
+def game():
+    global a, crouchActive, jumpActive, dPosY
+    global dinoWidth, dinoHeight, globalTick, ground, bList
+
+
+    a.strokeW(0)
+    a.fill(0,255,0)
+    if crouchActive:
+        if jumpActive:
+            jumpReset()
+        dinoCol = a.rect(100, dPosY+(dinoHeight-dinoWidth+10), dinoHeight, dinoWidth-10)
+    else:
+        dinoCol = a.rect(100, dPosY, dinoWidth, dinoHeight)
+
+    for i in range(len(bList)):
+        bList[i].update(a)
+        if bList[i].checkCol:
+            gameOverCh(a.checkColRect(dinoCol,bList[i].currentCollision))
+
+
+    if jumpPad:
+            jump()
+
+    crouchActive = crouchLeft and crouchRight
+
+
+    # Spawn Vals Screen Print =Z S.V.S.P.
+    """
+    a.text(100,100,checkPause("spawn"), "asd")
+    a.text(100,150,blocker.moveSpeed, "asd")
+    a.text(100,200,spawnTimeDelta, "asd")
+    """
+
+
+    a.strokeW(5)
+    a.line(0,ground,1560,ground)
+
+    a.update()
+    jumpTick()
+    sleep(globalTick)
+    a.postloop()
+    spawner()
+    # print("!")
+
+
+def gameOver():
+    global a, crouchActive, jumpActive, dPosY
+    global dinoWidth, dinoHeight, globalTick, ground, bList
+
+
+    a.strokeW(0)
+    a.fill(0,255,0)
+    if crouchActive:
+        a.rect(100, dPosY+(dinoHeight-dinoWidth+10), dinoHeight, dinoWidth-10)
+    else:
+        a.rect(100, dPosY, dinoWidth, dinoHeight)
+
+
+
+    for i in range(len(bList)):
+        bList[i].update(a, False)
+
+
+    a.strokeW(5)
+    a.line(0,ground,1560,ground)
+
+
+    screenSize = a.getSize()
+
+    a.text(screenSize.x/2, screenSize.y/4, "GAME OVER", "title")
+
+    a.update()
+    a.postloop()
+
+    sleep(globalTick)
+
+
+def hub():
+    global a
+
+
+
+
+stateMains = [game, gameOver]
 
 if __name__ == '__main__':
+
+
+
     while a.alive():
-
-
-        a.strokeW(0)
-        a.fill(0,255,0)
-
-        if crouchActive:
-            if jumpActive:
-                jumpReset()
-            a.rect(100, dPosY+(height-width+10), height, width-10)
-        else:
-            a.rect(100, dPosY, width, height)
-
-
-
-        a.strokeW(5)
-        a.line(0,ground,1560,ground)
-
-
-
-
-        for i in range(len(bList)):
-            bList[i].update(a)
-
-        a.text(100,100,checkPause("spawn"), "asd")
-        a.text(100,150,blocker.moveSpeed, "asd")
-        a.text(100,200,spawnTimeDelta, "asd")
-        a.update()
-
-
-        jumpTick()
-        sleep(globalTick)
-        a.postloop()
-
-        spawner()
-
-
-
+        stateMains[appState]()
+        jumpPad =  keyboard.is_pressed("s")
+        crouchLeft = keyboard.is_pressed("q")
+        crouchRight = keyboard.is_pressed("e")
 
 
