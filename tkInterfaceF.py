@@ -56,6 +56,11 @@ class tkInterface:
             "anchor":"center",
             "styling":('Helvetica','30', 'bold')
         }
+        self.textTypes["subtitle"] = {
+            "rgb":self._rgb_to_hex((0,0,0)),
+            "anchor":"center",
+            "styling":('Helvetica','26')
+        }
 
 
 
