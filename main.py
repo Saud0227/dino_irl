@@ -52,7 +52,7 @@ blocker.typeYVal = {0:700, 1:700, 2:600, 3:400}
 blocker.typeXSize = {0:20, 1:20, 2:50, 3:50}
 blocker.typeYSize = {0:40, 1:50, 2:30, 3:30}
 blocker.moveSpeed = 10
-spawnTimeDelta = 1
+spawnTimeDelta = 1.3
 # Spawner tweak
 #------------------------------------------------------------
 
@@ -65,9 +65,30 @@ speedChangeVal = 10
 
 
 
-a = tkInterface(Tk, True)
+a = tkInterface(Tk, False)
 
 
+def reset(toState: int):
+    global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
+    global dinoWidth, dPosY, dPosYStart, dinoDeltaY, crouchActive, dAlive
+    global pauseList, appState, ground
+    bList = []
+    dC = 0
+    blocker.moveSpeed = 10
+    spawnTimeDelta = 1.3
+    jumpActive = False
+    jumpH = 40
+    jumpReduce = 1.5
+    dinoHeight = 120
+    dinoWidth = 90
+    dPosY = ground-dinoHeight
+    dPosYStart = dPosY
+    dinoDeltaY = 0
+    crouchActive = False
+    dAlive = True
+    ground = 700
+    pauseList = {}
+    appState = toState
 
 
 def smartInsert(list, clsItm):
@@ -253,6 +274,12 @@ def gameOver():
 
     a.text(screenSize.x/2, screenSize.y/4, "GAME OVER", "title")
 
+    a.text(screenSize.x/2-150, screenSize.y*2/3, "LEFT: MENU", "subtitle")
+    a.text(screenSize.x/2+150, screenSize.y*2/3, "RIGHT: SAVE", "subtitle")
+    a.text(screenSize.x/2, screenSize.y*2/3+50, "JUMP: RESTART", "subtitle")
+
+    if jumpPad:
+        reset(0)
     a.update()
     a.postloop()
 
