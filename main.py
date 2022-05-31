@@ -18,7 +18,7 @@ from blockers import blocker
 appState = 0
 pauseList = {}
 globalTick = 0.01
-
+screenSetup = False
 
 
 
@@ -53,8 +53,8 @@ crouchActive = False
 bList = []
 dC = 0
 blocker.typeYVal = {0:700, 1:700, 2:600, 3:400}
-blocker.typeXSize = {0:20, 1:20, 2:50, 3:50}
-blocker.typeYSize = {0:40, 1:50, 2:30, 3:30}
+blocker.typeXSize = {0:40, 1:40, 2:100, 3:100}
+blocker.typeYSize = {0:80, 1:100, 2:60, 3:60}
 blocker.moveSpeed = 10
 spawnTimeDelta = 1.3
 # Spawner tweak
@@ -76,6 +76,11 @@ def reset(toState: int):
     global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
     global dinoWidth, dPosY, dPosYStart, dinoDeltaY, crouchActive, dAlive
     global pauseList, appState, ground
+    ground = a.getSize().y*0.9
+
+    blocker.typeYVal = {0:ground, 1:ground, 2:ground-100, 3:ground-300}
+
+
     bList = []
     dC = 0
     blocker.moveSpeed = 10
@@ -90,8 +95,8 @@ def reset(toState: int):
     dinoDeltaY = 0
     crouchActive = False
     dAlive = True
-    ground = 700
     pauseList = {}
+
     appState = toState
 
 
@@ -299,11 +304,16 @@ def hub():
 stateMains = [game, gameOver]
 
 if __name__ == '__main__':
+    print(ground)
+    print(a.getSize())
 
 
 
     while a.alive():
         stateMains[appState]()
+        if not screenSetup:
+            reset(0)
+            screenSetup = True
         jumpPad =  keyboard.is_pressed("s")
         crouchLeft = keyboard.is_pressed("q")
         crouchRight = keyboard.is_pressed("e")
