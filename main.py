@@ -313,7 +313,6 @@ if __name__ == '__main__':
 
 
     while a.alive():
-        stateMains[appState]()
         if not screenSetup:
             reset(0)
             screenSetup = True
@@ -325,5 +324,6 @@ if __name__ == '__main__':
             jumpPad =  pinH.jumpCh()
             crouchLeft = pinH.leftCh()
             crouchRight = pinH.rightCh()
+        stateMains[appState]()
 
 
