@@ -20,6 +20,7 @@ class tkInterface:
             self.tkRoot.attributes('-fullscreen', True)
 
         self.tkRoot.bind('<Escape>',lambda e: self.unalive())
+        self.tkRoot.bind('<FocusOut>',lambda e: self.unalive())
 
         self.root = _tk.Canvas(self.tkRoot, width=int(self.tkRoot.winfo_screenwidth()),height=int(self.tkRoot.winfo_screenwidth()), bg="white")
         self.root.pack()

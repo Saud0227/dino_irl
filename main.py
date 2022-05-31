@@ -6,11 +6,20 @@ import datetime
 import keyboard
 import tkinter as Tk
 from random import randint
+from os import system
 
 from vectors import vector
 from tkInterfaceF import tkInterface
 from blockers import blocker
-from pins import pinHandler
+
+
+pinLogic = False
+
+try:
+    from pins import pinHandler
+    pinLogic = True
+except ModuleNotFoundError:
+    print("No Pins, running in computer")
 
 
 #APP SHITS
@@ -22,7 +31,8 @@ screenSetup = False
 
 testingKeyboard = False
 
-pinH = pinHandler(11, 13, 15)
+if pinLogic:
+    pinH = pinHandler(11, 13, 15)
 
 #Buttons
 #------------------------------------------------------------
@@ -72,8 +82,13 @@ speedChangeVal = 10
 
 
 a = tkInterface(Tk, False)
-a.unaliveTasks.append(pinH.clearLib)
+if pinLogic:
+    a.unaliveTasks.append(pinH.clearLib)
+    a.unaliveTasks.append(logout)
 
+def logout():
+    global pinLogic
+    system('killSession.sh')
 
 def reset(toState: int):
     global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
@@ -317,11 +332,11 @@ if __name__ == '__main__':
         if not screenSetup:
             reset(0)
             screenSetup = True
-        if testingKeyboard:
+        if testingKeyboard or not pinLogic:
             jumpPad =  keyboard.is_pressed("s")
             crouchLeft = keyboard.is_pressed("q")
             crouchRight = keyboard.is_pressed("e")
-        elif a.alive:
+        elif a.alive and pinLogic:
             jumpPad =  not pinH.jumpCh()
             crouchLeft = pinH.leftCh()
             crouchRight = pinH.rightCh()
