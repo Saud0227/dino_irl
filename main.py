@@ -30,7 +30,7 @@ globalTick = 0.01
 screenSetup = False
 jumpDeath = False
 
-assets = {"dino1":"assets/Dino_1.png", "dino2":"assets/Dino_2.png", "cact1":"assets/Kaktus_2.png", "fly1":"assets/Fågel_1.png", "fly2":"assets/Fågel_2.png"}
+assets = {"dino1":"assets/Dino_1.png", "dino2":"assets/Dino_2.png", "cact1":"assets/Kaktus_2.png", "fly1":"assets/Fågel_1.png", "fly2":"assets/Fågel_2.png", "dino_c1":"assets/Dino_l1.png", "dino_c2":"assets/Dino_l2.png"}
 
 
 testingKeyboard = True
@@ -53,7 +53,7 @@ ground = 700
 score = 0
 scoreRaw = 0
 animationTick = 0
-
+animationOn = True
 
 # DINO SHITS
 #------------------------------------------------------------
@@ -106,7 +106,7 @@ if pinLogic:
 def reset(toState: int):
     global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
     global dinoWidth, dPosY, dPosYStart, dinoDeltaY, crouchActive, dAlive
-    global pauseList, appState, ground, score, scoreRaw
+    global pauseList, appState, ground, score, scoreRaw, animationTick, animationOn
     ground = a.getSize().y*0.9
 
     blocker.typeYVal = {0:ground, 1:ground, 2:ground-100, 3:ground-300}
@@ -119,7 +119,7 @@ def reset(toState: int):
     jumpActive = False
     jumpH = 40
     jumpReduce = 1.5
-    dinoHeight = 180
+    dinoHeight = 190
     dinoWidth = 180
     dPosY = ground-dinoHeight
     dPosYStart = dPosY
@@ -129,6 +129,8 @@ def reset(toState: int):
     pauseList = {}
     score = 0
     scoreRaw = 0
+    animationTick = 0
+    animationOn = True
 
 
 
@@ -240,11 +242,12 @@ def spawner():
 
 
 def gameOverCh(_state:bool):
-    global appState, jumpPad, jumpDeath
+    global appState, jumpPad, jumpDeath, animationOn
     if _state:
         #print("DEAD")
         jumpDeath = jumpPad
         appState = 1
+        animationOn = False
 
 
 
@@ -258,7 +261,11 @@ def game():
     if crouchActive:
         if jumpActive:
             jumpReset()
-        dinoCol = a.rect(100, dPosY+(dinoHeight-dinoWidth+10), dinoHeight, dinoWidth-10)
+        dinoCol = a.rect(100, dPosY+dinoWidth*0.4, dinoHeight*1.3, dinoWidth*0.6)
+        if animationTick % 2 == 1:
+            a.drawImage(100, dPosY+70, "dino_c2")
+        else:
+            a.drawImage(100, dPosY+70, "dino_c1")
     else:
         dinoCol = a.rect(100, dPosY, dinoWidth, dinoHeight)
         if not jumpActive and animationTick % 2 == 1:
@@ -299,7 +306,6 @@ def game():
     sleep(globalTick)
     a.postloop()
     spawner()
-    # print("!")
 
 
 def gameOver():
@@ -310,9 +316,15 @@ def gameOver():
     a.strokeW(0)
     a.fill(0,255,0)
     if crouchActive:
-        a.rect(100, dPosY+(dinoHeight-dinoWidth+10), dinoHeight, dinoWidth-10)
+        if animationTick % 2 == 1:
+            a.drawImage(100, dPosY+70, "dino_c2")
+        else:
+            a.drawImage(100, dPosY+70, "dino_c1")
     else:
-        a.rect(100, dPosY, dinoWidth, dinoHeight)
+        if not jumpActive and animationTick % 2 == 1:
+            a.drawImage(100, dPosY, "dino2")
+        else:
+            a.drawImage(100, dPosY, "dino1")
 
 
 
@@ -369,8 +381,9 @@ if __name__ == '__main__':
             jumpPad =  not pinH.jumpCh()
             crouchLeft = pinH.leftCh()
             crouchRight = pinH.rightCh()
-        animationTick += 1
-        if animationTick > 9:
-            animationTick = 0
+        if animationOn:
+            animationTick += 1
+            if animationTick > 9:
+                animationTick = 0
 
 
