@@ -50,7 +50,7 @@ class tkInterface:
         self.textTypes = {}
         self.textTypes["middle"] = {
             "rgb":self._rgb_to_hex((200,200,200)),
-            "anchor":"w",
+            "anchor":"center",
             "styling":('Helvetica','12')
         }
         self.textTypes["standard"] = {

@@ -98,14 +98,14 @@ alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q",
 
 try:
     f = open("scoreboard.json", "r")
-    scoreBoardDat  = json.load(f)
+    scoreboardDat  = json.load(f)
     f.close()
 except FileNotFoundError:
-    scoreBoardDat = []
+    scoreboardDat = []
 
 def writeScoreboardToFile():
-    global scoreBoardDat
-    jsonObject = json.dumps(scoreBoardDat)
+    global scoreboardDat
+    jsonObject = json.dumps(scoreboardDat)
     with open("scoreboard.json", "w") as outfile:
         outfile.write(jsonObject)
 
@@ -113,9 +113,9 @@ def returnSec(itm):
     return itm[1]
 
 def scoreAdd(tag:str, val:int):
-    global scoreBoardDat
-    scoreBoardDat.append((tag, val))
-    scoreBoardDat.sort(key=returnSec, reverse=True)
+    global scoreboardDat
+    scoreboardDat.append((tag, val))
+    scoreboardDat.sort(key=returnSec, reverse=True)
     writeScoreboardToFile()
 
 
@@ -384,6 +384,37 @@ def game():
     spawner()
 
 
+def drawScoreBoard():
+    global a, scoreboardDat
+    a.strokeW(0)
+    screenSize = a.getSize()
+    a.fill(90,90,90)
+    a.rect(screenSize.x*0.745, screenSize.y*0.04, screenSize.x*0.23, screenSize.y*0.22)
+
+    a.text(screenSize.x*0.86, screenSize.y*0.02, "SCORE", "title")
+    a.fill(110,110,110)
+
+    for i in range(10):
+        fillVal = 110 + (i % 2) * 20
+        a.fill(fillVal, fillVal, fillVal)
+        a.rect(screenSize.x*0.75, screenSize.y*(0.05+0.02*i), screenSize.x*0.22, screenSize.y*0.02)
+
+
+
+    a.fill(0,0,0)
+    toDisplay = len(scoreboardDat)
+    if toDisplay > 10:
+        toDisplay = 10
+    for i in range(toDisplay):
+        a.text(screenSize.x*0.753, screenSize.y*(0.05+0.02*i), scoreboardDat[i][0])
+        a.text(screenSize.x*0.865, screenSize.y*(0.05+0.02*i), scoreboardDat[i][1])
+
+
+    a.stroke(0, 0, 0)
+    a.strokeW(3)
+    a.line(screenSize.x*0.86, screenSize.y*0.05, screenSize.x*0.86, screenSize.y*0.25)
+
+
 def gameOver():
     global a, crouchActive, jumpActive, dPosY
     global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad, crouchLeft, crouchRight
@@ -414,7 +445,7 @@ def gameOver():
     a.line(0,ground,screenSize.x,ground)
 
 
-
+    drawScoreBoard()
 
     a.text(screenSize.x/2, screenSize.y/4, "GAME OVER", "title")
     a.text(screenSize.x/2, screenSize.y/3, f"SCORE: {score}", "title")
@@ -449,7 +480,7 @@ def hub():
     else:
         a.drawImage(100, dPosY, "dino1")
 
-
+    drawScoreBoard()
     screenSize = a.getSize()
 
 
