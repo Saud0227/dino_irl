@@ -31,13 +31,13 @@ class tkInterface:
         self.itemIdIndex = 0
         self.itemIdPrefix = "CanvasRootObj"
 
-        #---------------------------------------
+        #------------------------------------------------------------
         self.rectMode = configHandler("rectmode")
         self.rectMode.state = 0
         self.rectMode.acceptedValue = ["onecorner", "center", "twocorner"]
         self.rectMode.verify()
 
-        #---------------------------------------
+        #------------------------------------------------------------
 
 
         self._fill = self._rgb_to_hex((255,255,255))
@@ -45,7 +45,7 @@ class tkInterface:
         self._strokeW = 2
 
 
-        #---------------------------------------
+        #------------------------------------------------------------
 
         self.textTypes = {}
         self.textTypes["middle"] = {
@@ -69,7 +69,9 @@ class tkInterface:
             "styling":('Helvetica','26')
         }
 
+        #------------------------------------------------------------
 
+        self.assets = None
 
     def getMousePos(self):
         return vector(self.tkRoot.winfo_pointerx(),self.tkRoot.winfo_pointery())
@@ -171,14 +173,22 @@ class tkInterface:
             textOptions = self.textTypes[style]
         except KeyError:
             textOptions = self.textTypes["standard"]
-        id = self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"])
-
+        id = self._getItemId()
+        self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"], tags=id)
+        return id
 
     def getSize(self):
         sizeObj = vector(self.root.winfo_width(),self.root.winfo_height())
         if sizeObj.x == sizeObj.y:
             sizeObj = vector(1920, 1080)
         return sizeObj
+
+
+
+    def drawImage(self, x:int, y:int, image:str):
+        id = self._getItemId()
+        self.root.create_image(x, y, image=self.assets[image], anchor="nw",tags=id)
+        return id
 
 
     @staticmethod

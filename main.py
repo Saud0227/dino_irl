@@ -52,6 +52,7 @@ dAlive = True
 ground = 700
 score = 0
 scoreRaw = 0
+animationTick = 0
 
 
 # DINO SHITS
@@ -59,7 +60,7 @@ scoreRaw = 0
 jumpActive = False
 jumpH = 40
 jumpReduce = 1.5
-dinoHeight = 120
+dinoHeight = 160
 dinoWidth = 90
 dPosY = ground-dinoHeight
 dPosYStart = dPosY
@@ -92,7 +93,9 @@ def logout():
 a = tkInterface(Tk, False)
 
 
-#assets = tkInterface.assetHandle(assets)
+assets = tkInterface.assetHandle(assets)
+a.assets = assets
+
 
 if pinLogic:
     a.unaliveTasks.append(pinH.clearLib)
@@ -116,8 +119,8 @@ def reset(toState: int):
     jumpActive = False
     jumpH = 40
     jumpReduce = 1.5
-    dinoHeight = 120
-    dinoWidth = 90
+    dinoHeight = 180
+    dinoWidth = 180
     dPosY = ground-dinoHeight
     dPosYStart = dPosY
     dinoDeltaY = 0
@@ -247,7 +250,7 @@ def gameOverCh(_state:bool):
 
 def game():
     global a, crouchActive, jumpActive, dPosY
-    global dinoWidth, dinoHeight, globalTick, ground, bList, score, scoreRaw
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, scoreRaw, animationTick
 
 
     a.strokeW(0)
@@ -258,6 +261,10 @@ def game():
         dinoCol = a.rect(100, dPosY+(dinoHeight-dinoWidth+10), dinoHeight, dinoWidth-10)
     else:
         dinoCol = a.rect(100, dPosY, dinoWidth, dinoHeight)
+        if not jumpActive and animationTick % 2 == 1:
+            a.drawImage(100, dPosY, "dino2")
+        else:
+            a.drawImage(100, dPosY, "dino1")
 
     for i in range(len(bList)):
         bList[i].update(a)
@@ -274,9 +281,10 @@ def game():
     # Spawn Vals Screen Print =Z S.V.S.P.
     """
     a.text(100,100,checkPause("spawn"), "asd")
-    a.text(100,150,blocker.moveSpeed, "asd")
+
     a.text(100,200,spawnTimeDelta, "asd")
     """
+    a.text(100,150,blocker.moveSpeed, "asd")
 
 
     a.strokeW(5)
@@ -361,5 +369,8 @@ if __name__ == '__main__':
             jumpPad =  not pinH.jumpCh()
             crouchLeft = pinH.leftCh()
             crouchRight = pinH.rightCh()
+        animationTick += 1
+        if animationTick > 9:
+            animationTick = 0
 
 
