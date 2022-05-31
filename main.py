@@ -322,7 +322,7 @@ if __name__ == '__main__':
             crouchLeft = keyboard.is_pressed("q")
             crouchRight = keyboard.is_pressed("e")
         elif a.alive:
-            jumpPad =  pinH.jumpCh()
+            jumpPad =  not pinH.jumpCh()
             crouchLeft = pinH.leftCh()
             crouchRight = pinH.rightCh()
 
