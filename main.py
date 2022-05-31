@@ -1,13 +1,17 @@
+#!bin/python
+
+
 from time import sleep
+import datetime
+import keyboard
 import tkinter as Tk
-from vectors import vector
-from tkInterfaceF import tkInterface
 from random import randint
 
+from vectors import vector
+from tkInterfaceF import tkInterface
 from blockers import blocker
 
 
-import keyboard
 
 #APP SHITS
 #------------------------------------------------------------
@@ -194,11 +198,10 @@ def spawner():
 
 
 
-
 def gameOverCh(_state:bool):
     global appState
     if _state:
-        print("DEAD")
+        #print("DEAD")
         appState = 1
 
 
@@ -238,7 +241,8 @@ def game():
 
 
     a.strokeW(5)
-    a.line(0,ground,1560,ground)
+    screenWidth = a.getSize().x
+    a.line(0,ground,screenWidth,ground)
 
     a.update()
     jumpTick()
