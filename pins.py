@@ -24,10 +24,16 @@ class pinHandler:
         return
 
     def jumpCh(self):
-        return GPIO.input(self.jumpPin)
+        pinV = GPIO.input(self.jumpPin)
+        print("jump: " + str(pinV))
+        return pinV
 
     def leftCh(self):
-        return GPIO.input(self.left)
+        pinV =  GPIO.input(self.left)
+        print("left: " + str(pinV))
+        return pinV
 
     def rightCh(self):
-        return GPIO.input(self.right)
+        pinV =  GPIO.input(self.right)
+        print("right: " + str(pinV))
+        return pinV
