@@ -87,6 +87,7 @@ class tkInterface:
 
     def unalive(self):
         self._alive = False
+        print(self.getSize())
         for itm in self.unaliveTasks:
             itm()
         self.tkRoot.destroy()
@@ -174,7 +175,10 @@ class tkInterface:
 
 
     def getSize(self):
-        return vector(self.root.winfo_width(),self.root.winfo_height())
+        sizeObj = vector(self.root.winfo_width(),self.root.winfo_height())
+        if sizeObj.x == sizeObj.y:
+            sizeObj = vector(1920, 1080)
+        return sizeObj
 
 
     @staticmethod
