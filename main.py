@@ -10,7 +10,7 @@ from random import randint
 from vectors import vector
 from tkInterfaceF import tkInterface
 from blockers import blocker
-from pins.py import pinHandler
+from pins import pinHandler
 
 
 #APP SHITS
