@@ -7,6 +7,9 @@ from serviceH import configHandler, rectHandler
 from vectors import vector
 
 
+from PIL import Image,ImageTk
+
+
 class tkInterface:
 
 
@@ -169,12 +172,21 @@ class tkInterface:
             textOptions = self.textTypes["standard"]
         id = self.root.create_text(x1, y1, text=text, font=textOptions["styling"], fill=textOptions["rgb"],anchor=textOptions["anchor"])
 
+
+    def getSize(self):
+        return vector(self.root.winfo_width(),self.root.winfo_height())
+
+
     @staticmethod
     def checkColRect(a, b):
         return rectHandler.checkCollision(a, b)
 
-    def getSize(self):
-        return vector(self.root.winfo_width(),self.root.winfo_height())
+    @staticmethod
+    def assetHandle(list):
+        for i in list:
+            list[i] = ImageTk.PhotoImage(Image.open(list[i]))
+        return list
+
 
 if __name__ == '__main__':
     a = tkInterface(tk)
