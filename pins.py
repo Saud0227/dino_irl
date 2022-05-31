@@ -21,6 +21,7 @@ class pinHandler:
 
     def clearLib(self):
         GPIO.cleanup()
+        print("GPIO clear")
         return
 
     def jumpCh(self):

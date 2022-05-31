@@ -72,6 +72,7 @@ speedChangeVal = 10
 
 
 a = tkInterface(Tk, False)
+a.unaliveTasks.append(pinH.clearLib)
 
 
 def reset(toState: int):

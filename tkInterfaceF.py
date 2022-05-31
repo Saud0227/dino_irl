@@ -13,6 +13,9 @@ class tkInterface:
     def __init__(self, _tk, _debug:bool = False):
         self.tkRoot = _tk.Tk()
         self._alive = True
+        self.unaliveTasks = []
+
+
         if not _debug:
             self.tkRoot.attributes('-fullscreen', True)
 
@@ -80,6 +83,8 @@ class tkInterface:
 
     def unalive(self):
         self._alive = False
+        for itm in self.unaliveTasks:
+            itm()
         self.tkRoot.destroy()
 
 
