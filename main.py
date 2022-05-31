@@ -28,7 +28,7 @@ appState = 0
 pauseList = {}
 globalTick = 0.01
 screenSetup = False
-
+jumpDeath = False
 
 assets = {"dino1":"assets\Dino_1.png", "dino2":"assets\Dino_2.png", "cact1":"assets\Kaktus_2.png", "fly1":"assets\Fågel_1.png", "fly2":"assets\Fågel_2.png"}
 
@@ -50,6 +50,8 @@ buttonDebug = True
 #------------------------------------------------------------
 dAlive = True
 ground = 700
+score = 0
+scoreRaw = 0
 
 
 # DINO SHITS
@@ -101,7 +103,7 @@ if pinLogic:
 def reset(toState: int):
     global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
     global dinoWidth, dPosY, dPosYStart, dinoDeltaY, crouchActive, dAlive
-    global pauseList, appState, ground
+    global pauseList, appState, ground, score, scoreRaw
     ground = a.getSize().y*0.9
 
     blocker.typeYVal = {0:ground, 1:ground, 2:ground-100, 3:ground-300}
@@ -122,6 +124,11 @@ def reset(toState: int):
     crouchActive = False
     dAlive = True
     pauseList = {}
+    score = 0
+    scoreRaw = 0
+
+
+
 
     appState = toState
 
@@ -230,16 +237,17 @@ def spawner():
 
 
 def gameOverCh(_state:bool):
-    global appState
+    global appState, jumpPad, jumpDeath
     if _state:
         #print("DEAD")
+        jumpDeath = jumpPad
         appState = 1
 
 
 
 def game():
     global a, crouchActive, jumpActive, dPosY
-    global dinoWidth, dinoHeight, globalTick, ground, bList
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, scoreRaw
 
 
     a.strokeW(0)
@@ -272,8 +280,11 @@ def game():
 
 
     a.strokeW(5)
-    screenWidth = a.getSize().x
-    a.line(0,ground,screenWidth,ground)
+    screenS = a.getSize()
+    a.line(0,ground,screenS.x,ground)
+    scoreRaw += blocker.moveSpeed
+    score = int(scoreRaw/500)
+    a.text(screenS.x*0.7, screenS.y*0.1,score, "title")
 
     a.update()
     jumpTick()
@@ -285,7 +296,7 @@ def game():
 
 def gameOver():
     global a, crouchActive, jumpActive, dPosY
-    global dinoWidth, dinoHeight, globalTick, ground, bList
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad
 
 
     a.strokeW(0)
@@ -308,12 +319,14 @@ def gameOver():
     screenSize = a.getSize()
 
     a.text(screenSize.x/2, screenSize.y/4, "GAME OVER", "title")
-
+    a.text(screenSize.x/2, screenSize.y/3, f"SCORE: {score}", "title")
     a.text(screenSize.x/2-150, screenSize.y*2/3, "LEFT: MENU", "subtitle")
     a.text(screenSize.x/2+150, screenSize.y*2/3, "RIGHT: SAVE", "subtitle")
     a.text(screenSize.x/2, screenSize.y*2/3+50, "JUMP: RESTART", "subtitle")
 
-    if jumpPad:
+    if not jumpPad:
+        jumpDeath = False
+    if jumpPad and not jumpDeath:
         reset(0)
     a.update()
     a.postloop()
