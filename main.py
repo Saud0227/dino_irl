@@ -10,7 +10,7 @@ from random import randint
 from vectors import vector
 from tkInterfaceF import tkInterface
 from blockers import blocker
-
+from pins.py import pinHandler
 
 
 #APP SHITS
@@ -20,7 +20,9 @@ pauseList = {}
 globalTick = 0.01
 screenSetup = False
 
+testingKeyboard = False
 
+pinH = pinHandler(11, 13, 15)
 
 #Buttons
 #------------------------------------------------------------
@@ -314,8 +316,13 @@ if __name__ == '__main__':
         if not screenSetup:
             reset(0)
             screenSetup = True
-        jumpPad =  keyboard.is_pressed("s")
-        crouchLeft = keyboard.is_pressed("q")
-        crouchRight = keyboard.is_pressed("e")
+        if testingKeyboard:
+            jumpPad =  keyboard.is_pressed("s")
+            crouchLeft = keyboard.is_pressed("q")
+            crouchRight = keyboard.is_pressed("e")
+        else:
+            jumpPad =  pinH.jumpCh()
+            crouchLeft = pinH.leftCh()
+            crouchRight = pinH.rightCh()
 
 
