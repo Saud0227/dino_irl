@@ -1,6 +1,6 @@
 #!/bin/python
 
-
+import json
 from time import sleep
 import keyboard
 import tkinter as Tk
@@ -71,7 +71,7 @@ crouchActive = False
 bList = []
 dC = 0
 
-# blocker.typeYVal and blocker.movespeed are reset
+# blocker.typeYVal and blocker.moveSpeed are reset
 blocker.typeYVal = {0:700, 1:700, 2:300, 3:300}
 blocker.typeXSize = {0:100, 1:105, 2:250, 3:200}
 blocker.typeYSize = {0:140, 1:170, 2:135, 3:135}
@@ -86,6 +86,80 @@ dCChangeVal = 70
 speedCutoff = 30
 speedChangeVal = 10
 
+#------------------------------------------------------------
+
+
+
+
+# Json Scoreboard Loading Crap
+#------------------------------------------------------------
+alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","å","ä","ö"]
+
+
+try:
+    f = open("scoreboard.json", "r")
+    scoreBoardDat  = json.load(f)
+    f.close()
+except FileNotFoundError:
+    scoreBoardDat = []
+
+def writeScoreboardToFile():
+    global scoreBoardDat
+    jsonObject = json.dumps(scoreBoardDat)
+    with open("scoreboard.json", "w") as outfile:
+        outfile.write(jsonObject)
+
+def returnSec(itm):
+    return itm[1]
+
+def scoreAdd(tag:str, val:int):
+    global scoreBoardDat
+    scoreBoardDat.append((tag, val))
+    scoreBoardDat.sort(key=returnSec, reverse=True)
+    writeScoreboardToFile()
+
+
+
+def getName(a):
+    global alphabet
+    a.postloop()
+    active = True
+    word = []
+    strWord = ''
+    sleep(0.5)
+    while active:
+        screenSize = a.getSize()
+        strWord = ''.join(word)
+        a.text(screenSize.x/2, screenSize.y/4, "INPUT", "title")
+        a.text(screenSize.x/2, screenSize.y/3.5, strWord, "title")
+        a.update()
+        a.postloop()
+        sleep(0.1)
+
+        cKey = keyboard.read_key()
+        if cKey == "enter":
+            active = False
+        elif cKey == "backspace":
+            if len(word) > 0:
+                word.pop(-1)
+        elif cKey == "space":
+            if len(word) > 0 and word[-1] != " ":
+                word.append(" ")
+        else:
+            if cKey in alphabet:
+                if len(word) < 1:
+                    word.append(cKey.capitalize())
+                elif word[-1] == " ":
+                    word.append(cKey.capitalize())
+                else:
+                    word.append(cKey)
+
+
+
+
+
+    return strWord
+#getName()
 #------------------------------------------------------------
 def logout():
     global pinLogic
@@ -353,6 +427,9 @@ def gameOver():
     if jumpPad and not jumpDeath:
         reset(0)
     if crouchLeft:
+        reset(2)
+    if crouchRight:
+        scoreAdd(getName(a), score)
         reset(2)
     a.update()
     a.postloop()
