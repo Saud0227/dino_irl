@@ -6,6 +6,7 @@ class blocker:
     typeYVal = {}
     typeXSize = {}
     typeYSize = {}
+    typeAssets = {}
     moveSpeed = 0
 
     typeAssets = {}
@@ -17,6 +18,8 @@ class blocker:
         self.xS = self.typeXSize[self.type]
         self.yS = self.typeYSize[self.type]
 
+        self.asset = self.typeAssets[self.type]
+
         self.currentCollision = None
 
 
@@ -25,21 +28,26 @@ class blocker:
 
 
 
-    def update(self, a, active=True):
+    def update(self, a, aT:int, active=True):
         if self.killMe:
             return None
         if active:
-            self.x -= self.moveSpeed
+            self.x -= self.moveSpeed + self.moveSpeed*0.5*int(self.type > 1)
 
 
         if self.x < a.getSize().x:
-            pass
-            #display graphic
-        #if self.x < a.getSize().x/2:
-        if self.x < a.getSize().x:
+            if self.asset == True:
+                if aT < 5:
+                    a.drawImage(self.x, self.y-self.yS, "fly1")
+                else:
+                    a.drawImage(self.x, self.y-self.yS, "fly2")
+
+            else:
+                a.drawImage(self.x, self.y-self.yS, self.asset)
+        if self.x < a.getSize().x/2:
             a.fill(255,0,0)
             self.checkCol = True
-            self.currentCollision = a.rect(self.x, self.y-self.yS, self.xS, self.yS, True)
+            self.currentCollision = a.rect(self.x, self.y-self.yS, self.xS, self.yS, False)
 
 
         if self.x < self.xS*-1:

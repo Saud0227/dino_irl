@@ -2,7 +2,6 @@
 
 
 from time import sleep
-import datetime
 import keyboard
 import tkinter as Tk
 from random import randint
@@ -30,7 +29,7 @@ globalTick = 0.01
 screenSetup = False
 jumpDeath = False
 
-assets = {"dino1":"assets/Dino_1.png", "dino2":"assets/Dino_2.png", "cact1":"assets/Kaktus_2.png", "fly1":"assets/Fågel_1.png", "fly2":"assets/Fågel_2.png", "dino_c1":"assets/Dino_l1.png", "dino_c2":"assets/Dino_l2.png"}
+assets = {"dino1":"assets/Dino_1.png", "dino2":"assets/Dino_2.png", "cact1":"assets/Kaktus_2.png", "cact2":"assets/Kaktus_1.png", "fly1":"assets/Fågel_1.png", "fly2":"assets/Fågel_2.png", "dino_c1":"assets/Dino_l1.png", "dino_c2":"assets/Dino_l2.png", "gg":"assets/gameOver.png"}
 
 
 testingKeyboard = True
@@ -71,10 +70,13 @@ crouchActive = False
 #------------------------------------------------------------
 bList = []
 dC = 0
-blocker.typeYVal = {0:700, 1:700, 2:600, 3:400}
-blocker.typeXSize = {0:40, 1:40, 2:100, 3:100}
-blocker.typeYSize = {0:80, 1:100, 2:60, 3:60}
-blocker.moveSpeed = 10
+
+# blocker.typeYVal and blocker.movespeed are reset
+blocker.typeYVal = {0:700, 1:700, 2:300, 3:300}
+blocker.typeXSize = {0:100, 1:105, 2:250, 3:200}
+blocker.typeYSize = {0:140, 1:170, 2:135, 3:135}
+blocker.typeAssets = {0:"cact1", 1:"cact2", 2:True, 3:True}
+blocker.moveSpeed = 15
 spawnTimeDelta = 1.3
 # Spawner tweak
 #------------------------------------------------------------
@@ -109,12 +111,12 @@ def reset(toState: int):
     global pauseList, appState, ground, score, scoreRaw, animationTick, animationOn
     ground = a.getSize().y*0.9
 
-    blocker.typeYVal = {0:ground, 1:ground, 2:ground-100, 3:ground-300}
+    blocker.typeYVal = {0:ground, 1:ground, 2:ground-150, 3:ground-300}
 
 
     bList = []
     dC = 0
-    blocker.moveSpeed = 10
+    blocker.moveSpeed = 15
     spawnTimeDelta = 1.3
     jumpActive = False
     jumpH = 40
@@ -223,7 +225,7 @@ def spawner():
         if spawnTimeDelta < 0.1:
             spawnTimeDelta = 0.1
 
-        blocker.moveSpeed = 10 + dC / (speedChangeVal*(1+int(blocker.moveSpeed>speedCutoff)))
+        blocker.moveSpeed = 15 + dC / (speedChangeVal*(1+int(blocker.moveSpeed>speedCutoff)))
         if blocker.moveSpeed > 70:
             blocker.moveSpeed = 70
         spawnX = a.getSize().x*1.2 + randint(-int(a.getSize().x*0.15),200)
@@ -234,7 +236,7 @@ def spawner():
             xDelta = spawnX
             for i in range(randint(1,4)):
                 smartInsert(bList, blocker(0, xDelta))
-                xDelta += randint(blocker.typeXSize[0], blocker.typeXSize[0]*2)
+                xDelta += randint(blocker.typeXSize[0], blocker.typeXSize[0]*1)
         else:
             smartInsert(bList, blocker(toSpawn, spawnX))
 
@@ -261,20 +263,20 @@ def game():
     if crouchActive:
         if jumpActive:
             jumpReset()
-        dinoCol = a.rect(100, dPosY+dinoWidth*0.4, dinoHeight*1.3, dinoWidth*0.6)
+        dinoCol = a.rect(100, dPosY+dinoWidth*0.4, dinoHeight*1.3, dinoWidth*0.6, False)
         if animationTick % 2 == 1:
             a.drawImage(100, dPosY+70, "dino_c2")
         else:
             a.drawImage(100, dPosY+70, "dino_c1")
     else:
-        dinoCol = a.rect(100, dPosY, dinoWidth, dinoHeight)
+        dinoCol = a.rect(100, dPosY, dinoWidth, dinoHeight, False)
         if not jumpActive and animationTick % 2 == 1:
             a.drawImage(100, dPosY, "dino2")
         else:
             a.drawImage(100, dPosY, "dino1")
 
     for i in range(len(bList)):
-        bList[i].update(a)
+        bList[i].update(a, animationTick)
         if bList[i].checkCol:
             gameOverCh(a.checkColRect(dinoCol,bList[i].currentCollision))
 
@@ -329,7 +331,7 @@ def gameOver():
 
 
     for i in range(len(bList)):
-        bList[i].update(a, False)
+        bList[i].update(a, animationTick, False)
 
 
     a.strokeW(5)
