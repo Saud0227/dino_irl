@@ -23,7 +23,7 @@ except ModuleNotFoundError:
 
 #APP SHITS
 #------------------------------------------------------------
-appState = 0
+appState = 2
 pauseList = {}
 globalTick = 0.01
 screenSetup = False
@@ -312,7 +312,7 @@ def game():
 
 def gameOver():
     global a, crouchActive, jumpActive, dPosY
-    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad, crouchLeft, crouchRight
 
 
     a.strokeW(0)
@@ -333,12 +333,14 @@ def gameOver():
     for i in range(len(bList)):
         bList[i].update(a, animationTick, False)
 
+    screenSize = a.getSize()
+
 
     a.strokeW(5)
-    a.line(0,ground,1560,ground)
+    a.line(0,ground,screenSize.x,ground)
 
 
-    screenSize = a.getSize()
+
 
     a.text(screenSize.x/2, screenSize.y/4, "GAME OVER", "title")
     a.text(screenSize.x/2, screenSize.y/3, f"SCORE: {score}", "title")
@@ -350,6 +352,8 @@ def gameOver():
         jumpDeath = False
     if jumpPad and not jumpDeath:
         reset(0)
+    if crouchLeft:
+        reset(2)
     a.update()
     a.postloop()
 
@@ -357,12 +361,38 @@ def gameOver():
 
 
 def hub():
-    global a
+    global a, crouchActive, jumpActive, dPosY
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad
+
+
+    a.strokeW(0)
+    a.fill(0,255,0)
+    if animationTick % 2 == 1:
+        a.drawImage(100, dPosY, "dino2")
+    else:
+        a.drawImage(100, dPosY, "dino1")
+
+
+    screenSize = a.getSize()
+
+
+    a.strokeW(5)
+    a.line(0,ground,screenSize.x,ground)
+
+    a.text(screenSize.x/2, screenSize.y/4, "DINO GAME", "title")
+    a.text(screenSize.x/2, screenSize.y/3.5, "JUMP  TO START", "title")
+
+    if jumpPad:
+        reset(0)
+    a.update()
+    a.postloop()
+
+    sleep(globalTick)
 
 
 
 
-stateMains = [game, gameOver]
+stateMains = [game, gameOver, hub]
 
 if __name__ == '__main__':
     print(ground)
@@ -373,7 +403,7 @@ if __name__ == '__main__':
     while a.alive():
         stateMains[appState]()
         if not screenSetup:
-            reset(0)
+            reset(2)
             screenSetup = True
         if testingKeyboard or not pinLogic:
             jumpPad =  keyboard.is_pressed("s")
