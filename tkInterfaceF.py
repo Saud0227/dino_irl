@@ -166,7 +166,7 @@ class tkInterface:
 
 
 
-    def text(self, x1: int, y1: int, text: str, style: str):
+    def text(self, x1: int, y1: int, text: str, style = "standard"):
         try:
             textOptions = self.textTypes[style]
         except KeyError:
