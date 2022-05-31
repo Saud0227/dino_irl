@@ -29,6 +29,10 @@ pauseList = {}
 globalTick = 0.01
 screenSetup = False
 
+
+assets = {"dino1":"assets\Dino_1.png", "dino2":"assets\Dino_2.png", "cact1":"assets\Kaktus_2.png", "fly1":"assets\Fågel_1.png", "fly2":"assets\Fågel_2.png"}
+
+
 testingKeyboard = False
 
 if pinLogic:
@@ -78,17 +82,21 @@ speedCutoff = 30
 speedChangeVal = 10
 
 #------------------------------------------------------------
-
+def logout():
+    global pinLogic
+    system('killSession.sh')
 
 
 a = tkInterface(Tk, False)
+
+
+assets = tkInterface.assetHandle(assets)
+
 if pinLogic:
     a.unaliveTasks.append(pinH.clearLib)
     a.unaliveTasks.append(logout)
 
-def logout():
-    global pinLogic
-    system('killSession.sh')
+
 
 def reset(toState: int):
     global bList, dC, spawnTimeDelta, jumpActive, jumpH, jumpReduce, dinoHeight
