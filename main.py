@@ -488,7 +488,7 @@ def hub():
     a.line(0,ground,screenSize.x,ground)
 
     a.text(screenSize.x/2, screenSize.y/4, "DINO GAME", "title")
-    a.text(screenSize.x/2, screenSize.y/3.5, "JUMP  TO START", "title")
+    a.text(screenSize.x/2, screenSize.y/3.5, "CROUCH TO START", "title")
 
     if crouchLeft and crouchRight:
         reset(0)
