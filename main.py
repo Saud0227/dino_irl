@@ -470,7 +470,7 @@ def gameOver():
 
 def hub():
     global a, crouchActive, jumpActive, dPosY
-    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad
+    global dinoWidth, dinoHeight, globalTick, ground, bList, score, jumpDeath, jumpPad, crouchLeft, crouchRight
 
 
     a.strokeW(0)
@@ -490,7 +490,7 @@ def hub():
     a.text(screenSize.x/2, screenSize.y/4, "DINO GAME", "title")
     a.text(screenSize.x/2, screenSize.y/3.5, "JUMP  TO START", "title")
 
-    if jumpPad:
+    if crouchLeft and crouchRight:
         reset(0)
     a.update()
     a.postloop()
