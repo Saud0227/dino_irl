@@ -32,7 +32,7 @@ jumpDeath = False
 assets = {"dino1":"assets/Dino_1.png", "dino2":"assets/Dino_2.png", "cact1":"assets/Kaktus_2.png", "cact2":"assets/Kaktus_1.png", "fly1":"assets/Fågel_1.png", "fly2":"assets/Fågel_2.png", "dino_c1":"assets/Dino_l1.png", "dino_c2":"assets/Dino_l2.png", "gg":"assets/gameOver.png"}
 
 
-testingKeyboard = True
+testingKeyboard = False
 
 if pinLogic:
     pinH = pinHandler(11, 13, 15)
@@ -280,7 +280,7 @@ def spawnTRNG():
     if rngSpawn < 60:
         return 2
 
-    if rngSpawn < 80:
+    if rngSpawn < 80:   
         return 3
 
     return 0
